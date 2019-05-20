@@ -1,0 +1,29 @@
+// 接口拦截器
+interface responseVal {
+  data: object,
+  status: number,
+  [propName: string]: any
+}
+import axios from 'axios';
+const isProd = process.env.NODE_ENV === 'production';
+const instance = axios.create({
+  baseURL: isProd ? '/apis' : '/service',
+});
+// 请求携带 token
+let AUTH_TOKEN = '';
+// instance.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+// 设置请求头
+instance.defaults.headers.post['Content-Type'] = 'application/json';
+
+instance.interceptors.request.use((config: any) => {
+  if (AUTH_TOKEN) config.headers['x-auth-token'] = AUTH_TOKEN;
+  return config;
+});
+instance.interceptors.response.use((response:any) => {
+  if(response.headers['x-auth-token']) AUTH_TOKEN = response.headers['x-auth-token'];
+  return Promise.resolve(response)
+  // return { data: response.data, status: response.status }
+}, (error: any) => {
+  return Promise.reject(error)
+});
+export { instance };

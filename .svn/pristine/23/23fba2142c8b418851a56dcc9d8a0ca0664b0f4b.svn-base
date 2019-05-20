@@ -1,0 +1,85 @@
+<template>
+  <div class="form-layout">
+    <a-form :form="form" layout="inline">
+      <a-form-item
+        :label="value.ui.label"
+        v-for="(value,key,index) in queryBarData.formList"
+        :key="index"
+      >
+        <a-input v-decorator="[
+          key
+        ]" autocomplete="OFF" placeholder/>
+      </a-form-item>
+    </a-form>
+    <div class="query-btn">
+      <a-button
+        v-for="(value,key,index) in queryBarData.btnList"
+        :key="index"
+        type="primary"
+        @click.stop="queryBarBtnClick(key)"
+      >{{value}}</a-button>
+    </div>
+  </div>
+</template>
+
+<script>
+import utools from '@/utils/uTools.ts'
+export default {
+  props: {
+    queryBarData: {
+      type: Object,
+      default: () => ({
+        btnList: {
+          query: "查询",
+          insert: "新增",
+          remove: "删除",
+          update: "修改"
+        },
+        formList: {
+          name: {
+            type: "string",
+            ui: {
+              label: "用户名"
+            }
+          },
+          age: {
+            type: "string",
+            ui: {
+              label: "年龄"
+            }
+          }
+        }
+      })
+    }
+  },
+  data() {
+    return {
+      form: this.$form.createForm(this)
+    };
+  },
+  methods: {
+    // 点击按钮
+    queryBarBtnClick(target) {
+      let param = { target };
+      target === "query" &&
+        this.form.validateFields((err, value) => {
+          param.formData = utools.mapObj(value);
+        });
+      this.$emit("queryBarBtnClick", param);
+    }
+  }
+};
+</script>
+<style lang='less' scoped>
+.form-layout {
+  display: flex;
+  flex-wrap: wrap
+}
+.query-btn {
+  .form-layout;
+  align-content: center;
+  > button {
+    margin-right: 10px;
+  }
+}
+</style>

@@ -1,0 +1,52 @@
+<template>
+  <section class="home">
+    <!-- 菜单 -->
+    <menu-item></menu-item>
+    <section class="main">
+      <!-- 头部 -->
+      <header-item></header-item>
+      <!-- tab -->
+      <tabs-component></tabs-component>
+      <!-- view -->
+      <section class="main-view">
+        <!-- <transition name='fade'> -->
+          <router-view />
+        <!-- </transition> -->
+      </section>
+    </section>
+  </section>
+</template>
+
+<script lang="ts">
+import { Vue, Component } from "vue-property-decorator";
+import HeaderItem from "@/components/Home/HeaderItem.vue";
+import MenuItem from "@/components/Home/MenuItem.vue";
+import TabsComponent from '@/components/Home/TabsComponent.vue'
+@Component({
+  components: {
+    HeaderItem,
+    MenuItem,
+    TabsComponent
+  }
+})
+export default class Home extends Vue {}
+</script>
+<style lang="less">
+.home {
+  box-sizing: border-box;
+  display: flex;
+  > .main {
+    box-sizing: border-box;
+    background-color: #f0f2f5;
+    width: 100%;
+    > .main-view {
+      background: #fff;
+      box-sizing: border-box;
+      margin: 10px ;
+      height: 87.5vmin;
+      overflow: auto;
+      padding: 10px;
+    }
+  }
+}
+</style>

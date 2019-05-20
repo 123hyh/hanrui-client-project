@@ -1,0 +1,160 @@
+<template>
+  <a-form
+    layout="inline"
+    :form="form"
+    :class="$style['form-layout']"
+  >
+    <a-form-item
+      :style="{'margin':0, 'flex-basis': `${layout}%`,textAlign: 'letf'}"
+      v-for="(val, key, index) in formData"
+      :label-col="{ span: 6 }"
+      :label="val.type === 'button' ? '' : val.ui.label"
+      :key="index"
+      :class="{[$style['set-width-100']]: val.type === 'textarea'}"
+    >
+      <a-checkbox
+        v-if="val.type === 'checkbox'"
+        v-decorator="[
+            key,
+            val.ui.default
+          ]"
+      ></a-checkbox>
+      <a-input
+        v-if="val.type === 'string'"
+        v-decorator="[
+            key,
+            {
+              rules: val.ui.rules,
+            }
+          ]"
+        :read-only='val.ui.readonly'
+      />
+      <!-- 带查询按钮 -->
+      <a-input-search
+        :read-only="true"
+        v-if="val.type === 'btnSearch'"
+        placeholder="点击按钮选择"
+        @search="onSearch(key)"
+      />
+      <!-- 按钮 -->
+      <!--  <a-button
+        v-if="val.type === 'button'"
+        type="primary"
+        @click="showModal(key)"
+      >
+       {{val.ui.label}}
+      </a-button> -->
+      <!-- 下拉 -->
+      <a-select
+        v-if="val.type === 'select'"
+        v-decorator="[
+          key,
+          {rules: val.ui.rules}
+        ]"
+        placeholder="--- 请选择 ---"
+      >
+        <a-select-option
+          v-for="(item, i) in val.ui.options"
+          :value="item.itemKey"
+          :key='i'
+        >
+          {{item.itemVal}}
+        </a-select-option>
+      </a-select>
+      <!-- 时间范围 开始-结束 -->
+      <a-range-picker
+        :style="{'width': '100%'}"
+        v-if="val.type === 'timeRange'"
+        format="YYYY-MM-DD"
+        v-decorator="[
+          key,
+          {rules: val.ui.rules, defaultValue: []}
+        ]"
+      />
+      <!-- 上传 -->
+      <a-upload
+      v-if="val.type ==='upload'"
+      v-decorator="[
+          key,
+          {rules: val.ui.rules}
+        ]"
+        name="file"
+        :multiple="true"
+        :headers="val.ui.headers"
+        action="/"
+      >
+        <a-button>
+          <a-icon type="upload" /> 附件
+        </a-button>
+      </a-upload>
+      <a-textarea
+        v-if="val.type === 'textarea'"
+        :placeholder="val.ui.placeholder"
+        :rows="4"
+      />
+    </a-form-item>
+  </a-form>
+</template>
+
+<script>
+// 表单公共组件
+export default {
+  data () {
+    return {
+      visible: false
+    }
+  },
+  props: {
+    formData: {
+      type: Object,
+      required: true
+    },
+    // form-item的布局
+    layout: {
+      type: Number,
+      default: 25
+    }
+  },
+  data () {
+    return {
+      form: this.$form.createForm(this, { onValuesChange: this.handleChange })
+    }
+  },
+  mounted(){
+    this.$emit('form', this.form)
+  },
+  methods: {
+    // 表单的值发生改变时触发
+    handleChange (data, value) {
+      // this.$emit('formDataChange', this.form)
+    },
+    // search按钮
+    onSearch (currentKey) {
+      console.log(`当前点击的search按钮 ${currentKey}`)
+    },
+    // 点击按钮
+    showModal (currentKey) {
+      debugger
+    },
+  }
+}
+</script>
+<style lang='less' module>
+.form-layout {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  > div {
+    display: flex !important;
+    > div:nth-child(2) {
+      min-height: 60px;
+      flex-basis: 50%;
+    }
+  }
+}
+.set-width-100 {
+  > div {
+    width: 100% !important;
+  }
+}
+</style>

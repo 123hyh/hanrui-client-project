@@ -1,0 +1,13 @@
+<template>
+  <section>
+    <h1>首页</h1>
+  </section>
+</template>
+<script >
+import {Vue,Component} from 'vue-property-decorator'
+@Component
+export default class IndexComponent extends Vue {
+
+}
+</script>
+

@@ -1,0 +1,115 @@
+<template>
+  <div class="header">
+    <header>
+      <!-- <div><a-icon @click.stop="handleOpenMenu" :type="collapsed ? 'menu-unfold' : 'menu-fold'" /></div> -->
+      <div class="float-right-pad">
+        <span class="icon-style">
+          <a-popover placement="bottomRight">
+            <template slot="content">
+              <div style='width:200px'>
+                <p v-bg-highlight>Content</p>
+                <p>Content</p>
+              </div>
+            </template>
+            <template slot="title">
+              <span>Title</span>
+            </template>
+            <a-icon type="bell" />
+          </a-popover>
+        </span>
+        <span
+          class="user-message"
+        >
+          <a-icon
+            type="github"
+            class="icon-style"
+          />
+          <span>管理员</span>
+        </span>
+      </div>
+      <ul class="user-function">
+        <li>setShowUser</li>
+        <li>setShowUser</li>
+        <li>setShowUser</li>
+      </ul>
+    </header>
+  </div>
+</template>
+
+<script lang='ts'>
+import { Vue, Component, Emit } from "vue-property-decorator";
+@Component
+export default class HeaderItem extends Vue {
+  public isShowUser: boolean = false;
+  public collapsed: boolean = true;
+  @Emit("handleOpenMenu") handleOpenMenu() {
+    this.collapsed = !this.collapsed;
+    return this.collapsed;
+  };
+  public setShowUser(){
+    setTimeout(() => {
+      this.isShowUser = false
+    }, 100);
+  }
+}
+</script>
+<style lang="less" scoped>
+.layout {
+  display: flex;
+  font-size: 25px;
+  align-items: center;
+  height: 100%;
+  > div {
+    margin-left: 20px;
+    cursor: pointer;
+  }
+}
+.header {
+  position: relative;
+  box-sizing: border-box;
+  padding: 5px;
+  box-shadow: 0 2px #f3f4f5;
+  height: 10vmin;
+  line-height: 10vmin;
+  background: #fff;
+  border-bottom: 1px solid #f3f4f5;
+}
+header::after {
+  display: inline-block;
+  content: "";
+}
+.icon-style {
+  box-sizing: border-box;
+  font-size: 25px;
+  height: 25px;
+  line-height: 25px;
+  cursor: pointer;
+  margin-right: 20px;
+  display: inline-block;
+  // margin: auto
+}
+.float-right-pad {
+  float: right;
+  margin-right: 50px;
+}
+.user-message {
+  display: inline-block;
+  cursor: pointer;
+  height: 50px;
+  line-height: 50px;
+}
+.user-message:hover .user-function{
+  display: block
+}
+.user-function {
+  list-style: none;
+  display: none;
+  width: 200px;
+  background: #fff;
+  position: absolute;
+  top: 11vmin;
+  right: 80px;
+  z-index: 50;
+  box-shadow: 0px 0px 5px 5px #dfdfdf;
+}
+</style>

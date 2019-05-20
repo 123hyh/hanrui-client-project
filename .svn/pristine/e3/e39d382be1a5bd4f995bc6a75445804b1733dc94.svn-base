@@ -1,0 +1,51 @@
+
+// tslint:disable-next-line:class-name
+interface pageVal {
+  page: {
+    current: number;
+    size: number;
+  };
+  row: any[];
+  [propName: string]: any;
+}
+import Vue from 'vue';
+import Component from 'vue-class-component';
+@Component
+export default class MyMixin extends Vue {
+  // 抽屉显示
+  public drawerVisible: boolean = false;
+  /**
+   * @method queryBarBtnClick 当前点击按钮对象
+   * @param target 当前点击按钮的key
+   * @param form 当前查询栏的form
+   */
+  public queryBarBtnClick({ target, formData }: { target: string, formData: object }) {
+    switch (target) {
+      case "insert":
+      case "update":
+        this.drawerVisible = true;
+        break;
+    }
+  }
+  public tableAllEvent(data: pageVal) {
+    const currentEvent = Object.keys(data)[0];
+    // tslint:disable-next-line:no-unused-expression
+    currentEvent && this.event[currentEvent](data[currentEvent]);
+  }
+  public handlePageChange({ current, size }: { current: number, size: number }): void {
+    debugger
+  }
+  public handleTableClickRow(row: any[]): void {
+    debugger
+  }
+  public closeDrawer(form) {
+    this.drawerVisible = !this.drawerVisible;
+    debugger
+  }
+  get event(): any {
+    return {
+      page: this.handlePageChange,
+      currentRowData: this.handleTableClickRow,
+    };
+  }
+}

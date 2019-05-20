@@ -1,0 +1,177 @@
+<script lang='tsx'>
+// import { Vue, Component } from "vue-property-decorator";
+import Component, { mixins } from "vue-class-component";
+import QueryBar from "@/components/common/QueryBar.vue";
+import TableComponent from "@/components/common/TableComponent.vue";
+import PaginationComponent from "@/components/common/PaginationComponent.vue";
+import FormDrawerComponent from "@/components/common/FormDrawerComponent.vue";
+import api from "@/api/interface.ts";
+import mixin from "@/views/myBusiness/mixins.ts";
+@Component({
+  components: {
+    QueryBar,
+    TableComponent,
+    PaginationComponent,
+    FormDrawerComponent
+  }
+})
+export default class clientView extends mixins(mixin) {
+  created() {
+    this.getTableData();
+  }
+  public formData = {
+    clientCode: {
+      type: "string",
+      ui: {
+        label: "客户编码",
+        readonly: true
+      }
+    },
+    clientName: {
+      type: "string",
+      ui: {
+        label: "客户名称"
+      }
+    },
+    corporate: {
+      type: "string",
+      ui: {
+        label: "法人代表"
+      }
+    },
+    creditCode: {
+      type: "string",
+      ui: {
+        label: "信用代码"
+      }
+    },
+    contact: {
+      type: "string",
+      ui: {
+        label: "联系人"
+      }
+    },
+    ContactMethod: {
+      type: "string",
+      ui: {
+        label: "联系方式"
+      }
+    },
+    purchaseCurrency: {
+      type: "select",
+      ui: {
+        label: "采购币别"
+      }
+    },
+    companyAddress: {
+      type: "string",
+      ui: {
+        label: "公司地址"
+      }
+    }
+  };
+  private searchFormList = {
+    client: {
+      type: "string",
+      ui: {
+        label: "客户编码"
+      }
+    },
+    clientName: {
+      type: "string",
+      ui: {
+        label: "客户"
+      }
+    },
+    status: {
+      type: "checkbox",
+      ui: {
+        label: "状态"
+      }
+    }
+  };
+  public table = {
+    list: [],
+    count: 0,
+    config: [
+      {
+        title: "客户编码",
+        dataIndex: "clientCode",
+        width: 200
+      },
+      {
+        title: "客户名称",
+        dataIndex: "clientName",
+        width: 200
+      },
+      {
+        title: "联系人",
+        dataIndex: "contact",
+        width: 200
+      },
+      {
+        title: "联系方式",
+        dataIndex: "ContactMethod",
+        width: 200
+      },
+      {
+        title: "币别",
+        dataIndex: "salesCurrency",
+        width: 200
+      },
+      {
+        title: "地址",
+        dataIndex: "companyAddress",
+        width: 300
+      },
+      {
+        title: "创建时间",
+        dataIndex: "createTime",
+        width: 200
+      },
+      {
+        title: "状态",
+        dataIndex: "status",
+        width: 200
+      }
+    ],
+    loading: false
+  };
+  render() {
+    return (
+      <div>
+        <query-bar
+          on-queryBarBtnClick={this.queryBarBtnClick}
+          queryBarData={{ formList: this.searchFormList }}
+        />
+        <table-component
+          table={this.table}
+          on-tableAllEvent={this.tableAllEvent}
+        />
+        <pagination-component
+          total={this.table.count}
+          on-pageChange={this.getTableData}
+        />
+        <form-drawer-component
+          formData={this.formData}
+          drawerVisible={this.drawerVisible}
+          on-closeDrawer={this.closeDrawer}
+        />
+      </div>
+    );
+  };
+  public async getTableData(
+    data: { pageIndex?: number; pageSize?: number } = {}
+  ) {
+    this.table.loading = true;
+    try {
+      const { list, count } = await api.getClientData(data);
+      this.table = { ...this.table, list, count };
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.table.loading = false;
+    }
+  }
+}
+</script>

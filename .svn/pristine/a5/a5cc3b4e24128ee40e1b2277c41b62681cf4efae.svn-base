@@ -1,0 +1,138 @@
+<script lang='tsx'>
+import Component, { mixins } from "vue-class-component";
+import QueryBar from "@/components/common/QueryBar.vue";
+import TableComponent from "@/components/common/TableComponent.vue";
+import mixin from "@/views/myBusiness/mixins.ts";
+import FormDrawerComponent from "@/components/common/FormDrawerComponent.vue";
+import PaginationComponent from "@/components/common/PaginationComponent.vue";
+import commodityMsgFormData from "@/testData/form/commodityMsg.ts";
+
+import api from "@/api/interface.ts";
+@Component({
+  components: {
+    QueryBar,
+    TableComponent,
+    PaginationComponent,
+    FormDrawerComponent
+  }
+})
+export default class CommodityMsg extends mixins(mixin) {
+  created() {
+    this.getTableData();
+  }
+  public formData = {
+    commodityCode: {
+      type: "string",
+      ui: {
+        label: "商品编码",
+        readonly: true
+      }
+    },
+    commodityName: {
+      type: "string",
+      ui: {
+        label: "商品名称"
+      }
+    },
+    Specifications: {
+      type: "string",
+      ui: {
+        label: "规格"
+      }
+    },
+    unit: {
+      type: "select",
+      ui: {
+        label: "规格"
+      }
+    },
+    brand: {
+      type: "string",
+      ui: {
+        label: "品牌"
+      }
+    },
+    origin: {
+      type: "string",
+      ui: {
+        label: "原产地"
+      }
+    }
+  };
+  public table = {
+    list: [],
+    count: 0,
+    config: [
+      {
+        title: "商品编码",
+        dataIndex: "commodityCode",
+        width: 200
+      },
+      {
+        title: "商品名称",
+        dataIndex: "commodityName",
+        width: 200
+      },
+      {
+        title: "规格型号",
+        dataIndex: "specifications",
+        width: 200
+      },
+      {
+        title: "单位",
+        dataIndex: "unit",
+        width: 200
+      },
+      {
+        title: "原产地",
+        dataIndex: "brand",
+        width: 200
+      },
+      {
+        title: "创建时间",
+        dataIndex: "createTime",
+        width: 200
+      },
+      {
+        title: "状态",
+        dataIndex: "status",
+        width: 200
+      }
+    ],
+    loading: false
+  };
+  render() {
+    return (
+      <div>
+        <query-bar on-queryBarBtnClick={this.queryBarBtnClick} />
+        <table-component
+          on-tableAllEvent={this.tableAllEvent}
+          table={this.table}
+        />
+        <pagination-component
+          total={this.table.count}
+          on-pageChange={this.getTableData}
+        />
+        <form-drawer-component
+          formData={this.formData}
+          drawerVisible={this.drawerVisible}
+          on-closeDrawer={this.closeDrawer}
+        />
+      </div>
+    );
+  }
+  public async getTableData(
+    data: { pageIndex?: number; pageSize?: number } = {}
+  ) {
+    this.table.loading = true;
+    try {
+      const { list, count } = await api.getCommodityMsgData(data);
+      this.table = { ...this.table, list, count };
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.table.loading = false;
+    }
+  }
+}
+</script>

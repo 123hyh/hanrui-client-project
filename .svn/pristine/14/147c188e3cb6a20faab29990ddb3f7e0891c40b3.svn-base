@@ -1,0 +1,36 @@
+<script lang="tsx">
+import { Vue, Component } from "vue-property-decorator";
+@Component
+export default class AccessoryUploader extends Vue {
+  render() {
+    return (
+      <section>
+        {/* 附件资料 */}
+        <a-divider orientation="left">附件资料</a-divider>
+        <section  class='accessory-upload'>
+            <a-upload
+              multiple={true}
+              fileList={this.fileList}
+              on-change={this.handleChange}
+            >
+              <a-button>
+                <a-icon type="upload" /> 附件上传
+              </a-button>
+            </a-upload>
+              <a-textarea placeholder="Basic usage" rows="2"/>
+        </section>
+      </section>
+    );
+  }
+  private fileList = [];
+  public handleChange(file: object) {
+    debugger;
+  }
+}
+</script>
+<style lang="less" scoped>
+.accessory-upload{
+  display: flex;
+}
+</style>
+

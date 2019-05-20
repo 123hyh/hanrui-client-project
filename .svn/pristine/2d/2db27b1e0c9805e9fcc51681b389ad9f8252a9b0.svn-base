@@ -1,0 +1,19 @@
+<template>
+  <a-pagination
+    showSizeChanger
+    @showSizeChange="pageChange"
+    @change='pageChange'
+    :total="total"
+  />
+</template>
+<script lang="ts">
+import { Vue, Component, Prop, Emit } from "vue-property-decorator";
+@Component
+export default class PaginationComponent extends Vue {
+  @Prop({ default: 0, type: Number }) total!: number;
+  @Emit("pageChange")
+  public pageChange(current: number, size: number) {
+    return { pageIndex: current, pageSize: size };
+  }
+}
+</script>

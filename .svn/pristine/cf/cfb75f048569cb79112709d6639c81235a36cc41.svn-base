@@ -1,0 +1,30 @@
+export default {
+  "age": {
+    "type": "string",
+    "key": "age",
+    "ui": {
+      "label": "年龄"
+    }
+  },
+/*   "name": {
+    "type": "object",
+    'title': '',
+    "properties": [{
+      "type": "string",
+      'key': 'firstName',
+      "ui": {
+        "label": "firstName"
+      }
+    },
+    {
+      "type": "string",
+      'key': 'lastName',
+      "ui": {
+        "label": "lastName"
+      }
+    }],
+    "ui": {
+      "label": "name"
+    }
+  } */
+}

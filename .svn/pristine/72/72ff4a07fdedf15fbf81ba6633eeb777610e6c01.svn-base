@@ -1,0 +1,26 @@
+<script lang='tsx'>
+interface testVal{
+  target: string,
+  formData: Object
+}
+import {Vue,Component} from 'vue-property-decorator'
+import QueryBar from '@/components/common/QueryBar.vue'
+@Component({
+  components: {
+    QueryBar
+  }
+})
+export default class CommodityMsg extends Vue{
+  render(){
+    return (<QueryBar on-queryBarBtnClick={this.queryBarBtnClick}></QueryBar>)
+  }
+  /**
+   * @method queryBarBtnClick 当前点击按钮对象
+   * @param target 当前点击按钮的key
+   * @param form 当前查询栏的form
+   */
+  queryBarBtnClick({target, formData}:testVal){
+    debugger
+  }
+}
+</script>

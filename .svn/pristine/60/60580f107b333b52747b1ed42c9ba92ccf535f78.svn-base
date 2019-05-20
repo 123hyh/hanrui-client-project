@@ -1,0 +1,41 @@
+<script lang="tsx">
+import { Vue, Component } from "vue-property-decorator";
+import TableComponent from '@/components/common/TableComponent.vue'
+import FormComponent from '@/components/common/FormComponent.vue'
+@Component({
+  components:{
+    TableComponent,
+    FormComponent
+  }
+})
+export default class OrderList extends Vue {
+  render() {
+    return (
+      <section>
+        <a-tabs
+          on-change={(key: string) => {
+            this.tabClick(key);
+          }}
+        >
+          {this.tabList.map((item, i) => {
+            return (
+              <a-tab-pane tab={item.label} key={item.key}>
+                <TableComponent> </TableComponent>
+              </a-tab-pane>
+            );
+          })}
+        </a-tabs>
+      </section>
+    );
+  }
+  private tabList = [
+    { label: "所有订单", key: "allOrder", content: '1' },
+    { label: "未结算订单", key: "noCloseOrder",content: '2' },
+    { label: "已结算订单", key: "yetCloseOrder",content: '3' },
+    { label: "订单评价", key: "orderEvaluate",content: '4' }
+  ];
+  tabClick(key: string) {
+    console.log(`当前页签 --> ${key}`);
+  }
+}
+</script>

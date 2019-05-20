@@ -1,0 +1,25 @@
+<script lang='tsx'>
+import Component, { mixins } from "vue-class-component";
+import QueryBar from "@/components/common/QueryBar.vue";
+import TableComponent from "@/components/common/TableComponent.vue";
+import mixin from "@/views/myBusiness/mixins.ts";
+import FormDrawerComponent from "@/components/common/FormDrawerComponent.vue";
+@Component({
+  components: {
+    QueryBar,
+    TableComponent,
+    FormDrawerComponent
+  }
+})
+export default class CommodityMsg extends mixins(mixin) {
+  render() {
+    return (
+      <div>
+        <query-bar on-queryBarBtnClick={this.queryBarBtnClick} />
+        <table-component on-tableAllEvent={this.tableAllEvent} />
+        <form-drawer-component drawerVisible={this.drawerVisible} on-closeDrawer={this.closeDrawer}/>
+      </div>
+    );
+  }
+}
+</script>

@@ -1,0 +1,92 @@
+<script lang='tsx'>
+/* 菜单组件 */
+import { Vue, Component } from "vue-property-decorator";
+@Component
+export default class MenuItem extends Vue {
+  menuList = [
+    { name: "首页", icon: "home", path: "/" },
+    {
+      name: "快捷下单",
+      icon: "home",
+      children: [{ name: "订单列表", icon: "home", path: "/orderList" }]
+    },
+    {
+      name: "财务管理",
+      icon: "home",
+      children: [{ name: "付款查询", icon: "home", path: "/paymentQuery" }]
+    },
+    {
+      name: "授信申请",
+      icon: "home",
+      children: [{ name: "风控处理", icon: "home", path: "/riskHandle" }]
+    },
+    {
+      name: "我的商家",
+      icon: "home",
+      children: [{ name: "商品信息", icon: "home", path: "/commodityMsg" }]
+    },
+    {
+      name: "信息中心",
+      icon: "home",
+      children: [{ name: "我的资料", icon: "home", path: "/myData" }]
+    }
+  ];
+  render() {
+    return (
+      <div class="menu">
+        <div class="log">
+          <h3>客户系统</h3>
+        </div>
+        <a-menu
+          onClick={(item: any) => this.menuClick(item)}
+          mode="inline"
+          theme="dark"
+        >
+          {this.menuList.map((item, index) => {
+            return item.children ? (
+              <a-sub-menu key={`sub${index}`}>
+                <span slot="title">
+                  <a-icon type={item.icon} />
+                  <span>{item.name}</span>
+                </span>
+                {item.children.map((elem, i) => {
+                  return <a-menu-item key={elem.path}>{elem.name}</a-menu-item>;
+                })}
+              </a-sub-menu>
+            ) : (
+              <a-menu-item key={item.path}>
+                <a-icon type="home" />
+                <span>{item.name}</span>
+              </a-menu-item>
+            );
+          })}
+        </a-menu>
+      </div>
+    );
+  }
+  collapsed = false;
+  toggleCollapsed() {
+    this.collapsed = !this.collapsed;
+  }
+  menuClick({ key }: { key: String }) {
+    console.log(`当前菜单 -> ${key}`);
+  }
+}
+</script>
+<style lang="less" scoped>
+.menu {
+  width: 250px;
+  .log {
+    height: 5vmin;
+    background-color: #001529;
+    line-height: 5vmin;
+    h3 {
+      color: rgba(255, 255, 255, 0.65) !important;
+      text-align: center;
+    }
+  }
+  > ul {
+    height: 95vmin;
+  }
+}
+</style>

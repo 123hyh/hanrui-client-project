@@ -1,0 +1,48 @@
+<script lang='tsx'>
+import Component,{mixins} from 'vue-class-component'
+import QueryBar from "@/components/common/QueryBar.vue";
+import TableComponent from "@/components/common/TableComponent.vue";
+import FormDrawerComponent from "@/components/common/FormDrawerComponent.vue";
+
+import mixin from '@/views/myBusiness/mixins.ts';
+@Component({
+  components: {
+    QueryBar,
+    TableComponent,
+    FormDrawerComponent
+  }
+})
+export default class SupplierView extends mixins(mixin) {
+  private searchFormList = {
+    supplier: {
+      type: "string",
+      ui: {
+        label: "供应商编码"
+      }
+    },
+    supplierName: {
+      type: "string",
+      ui: {
+        label: "供应商"
+      }
+    },
+    status: {
+      type: "checkbox",
+      ui: {
+        label: "状态"
+      }
+    }
+  };
+  render() {
+    return (
+      <div>
+        <query-bar on-queryBarBtnClick={this.queryBarBtnClick} queryBarData={{formList: this.searchFormList}}/>
+        <table-component
+          on-tableAllEvent={this.tableAllEvent}
+        />
+        <form-drawer-component drawerVisible={this.drawerVisible} on-closeDrawer={this.closeDrawer}/>
+      </div>
+    );
+  }
+}
+</script>

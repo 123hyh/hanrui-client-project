@@ -1,0 +1,36 @@
+// tslint:disable-next-line:class-name
+interface formValue {
+  [propName: string]: any;
+}
+class UTools {
+  /* 剔除对象 undefined || null */
+  public mapObj(obj: formValue) {
+    let param = {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key) && obj[key] !== undefined) {
+        param = { ...param, [key]: obj[key] };
+      }
+    };
+    return param;
+  };
+  public setTableKey(data: any, params: any) {
+    // 参数例子
+    // utools.setTableKey(list, { state: { "0": "禁用", "1": "启用" } });
+    return data.map((item: any) => {
+      item['key'] = Math.random() + Math.random();
+      for (let key in params) {
+        item[key] = params[key][item[key]]
+      };
+      return item;
+    })
+  };
+  // 表单操作是否成功
+  public setResponseMsg(code: number, Vue:any) {
+    if (/^2/.test('' + code)) {
+      Vue.$message.success('操作成功');
+    }else{
+      Vue.$message.error('操作出现错误');
+    }
+  }
+}
+export default Object.freeze(new UTools());

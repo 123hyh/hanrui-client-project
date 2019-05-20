@@ -1,0 +1,66 @@
+<script lang='tsx'>
+/* 菜单组件 */
+import { Vue, Component } from "vue-property-decorator";
+import menuList from '@/testData/menu/index.ts'
+@Component
+export default class MenuItem extends Vue {
+  public menuList = menuList;
+  public render() {
+    return (
+      <div class="menu">
+        <div class="log">
+          <h3>客户系统</h3>
+        </div>
+        <a-menu
+          onClick={(item: any) => this.menuClick(item)}
+          mode="inline"
+          theme="dark"
+        >
+          {this.menuList.map((item, index) => {
+            return item.children ? (
+              <a-sub-menu key={`sub${index}`}>
+                <span slot="title">
+                  <a-icon type={item.icon} />
+                  <span>{item.name}</span>
+                </span>
+                {item.children.map((elem, i) => {
+                  return <a-menu-item key={elem.path}>{elem.name}</a-menu-item>;
+                })}
+              </a-sub-menu>
+            ) : (
+              <a-menu-item key={item.path}>
+                <a-icon type="home" />
+                <span>{item.name}</span>
+              </a-menu-item>
+            );
+          })}
+        </a-menu>
+      </div>
+    );
+  }
+  collapsed: boolean = false;
+  public toggleCollapsed() {
+    this.collapsed = !this.collapsed;
+  }
+  public menuClick({ key }: { key: string }) {
+    this.$router.push({path: key});
+  }
+}
+</script>
+<style lang="less" scoped>
+.menu {
+  width: 250px;
+  .log {
+    height: 5vmin;
+    background-color: #001529;
+    line-height: 5vmin;
+    h3 {
+      color: rgba(255, 255, 255, 0.65) !important;
+      text-align: center;
+    }
+  }
+  > ul {
+    height: 95vmin;
+  }
+}
+</style>

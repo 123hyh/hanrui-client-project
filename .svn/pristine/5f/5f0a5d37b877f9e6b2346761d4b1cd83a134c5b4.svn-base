@@ -1,0 +1,20 @@
+import api from '@/api/interface.ts'
+interface stateVal {
+  menuList: any[]
+}
+const state = {
+  menuList: [],
+}
+const mutations = {
+  setMenuList(state: stateVal, { data = [] }: any) {
+    state.menuList = data;
+  }
+}
+const actions = {
+  async getMenu({ commit }: any) {
+    commit('setMenuList', await api.getMenuList())
+  }
+}
+export default {
+  state, mutations, actions
+}

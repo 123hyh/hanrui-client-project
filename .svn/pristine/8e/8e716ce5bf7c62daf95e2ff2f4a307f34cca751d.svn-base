@@ -1,0 +1,78 @@
+import { instance } from './config';
+import mock from '@/mock/table/index.ts';
+const qs = require('qs');
+const md5 = require('md5')
+interface page {
+  pageIndex?: number,
+  pageSize?: number,
+  [propName: string]: any
+}
+class Service {
+  private request: any;
+  constructor() {
+    this.request = function ({url,method, data}: { url:string, method: string, data?: object }) {
+      return instance({
+        url,
+        method,
+        [method === 'POST' ? 'data' : 'params']: data
+      })
+    }
+  };
+  // 登录
+  goLogin({userCode, password:p}: { userCode: string, password: string }) {
+    let data = {userCode,password: md5(p)}
+    return this.request({
+      url: `/auth/login?${qs.stringify(data)}`,
+      method: 'POST',
+    });
+  };
+  // 获取菜单
+  public getMenuList(){
+    return this.request({
+      url: `/menu/search`,
+      method: 'GET',
+    })
+  };
+  // 获取汇率
+  public getExchangerate(){
+    return this.request({
+      url: `/exchangerate/search`,
+      method: 'GET',
+    })
+  };
+  // 订单列表 表格 数据
+  public getOrderList({ pageIndex = 1, pageSize = 10, ...params }: page = {}) {
+    /* return this.request({
+      method: 'POST',
+      data
+    }) */
+    return mock.orderList(pageIndex, pageSize)
+  };
+  // 风控处理 表格 数据
+  public getriskHandleData({ pageIndex = 1, pageSize = 10, ...params }: page = {}) {
+    return mock.riskHandle(pageIndex, pageSize)
+  };
+
+  // 商品信息 表格数据
+  public getCommodityMsgData({ pageIndex = 1, pageSize = 10, ...params }: page = {}) {
+    return mock.commodityMsg(pageIndex, pageSize)
+  };
+  // 供应商 表格数据
+  public getSupplierData({ pageIndex = 1, pageSize = 10, ...params }: page = {}) {
+    return mock.supplier(pageIndex, pageSize)
+  };
+  public getClientData({ pageIndex = 1, pageSize = 10, ...param }: page = {}) {
+    return mock.client(pageIndex, pageSize)
+  };
+  // 我的信息 公司联络人
+  public getCompanyContact({ pageIndex = 1, pageSize = 10, ...param }: page = {}) {
+    return mock.companyContact(pageIndex, pageSize)
+  };
+}
+/* class api {
+  public install(Vue: any) {
+    Vue.prototype.api = Object.freeze(new Service);
+  }
+}
+export default api */
+export default Object.freeze(new Service)

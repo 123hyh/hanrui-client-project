@@ -1,0 +1,28 @@
+export default [
+  { name: "首页", icon: "home", path: "/index" },
+  {
+    name: "快捷下单",
+    icon: "home",
+    children: [{ name: "订单列表", icon: "home", path: "/orderList" },{ name: "进口委托订单",  path: "/entranceEntrustBills" }]
+  },
+  {
+    name: "财务管理",
+    icon: "home",
+    children: [{ name: "付款查询", icon: "home", path: "/paymentQuery" }]
+  },
+  {
+    name: "授信申请",
+    icon: "home",
+    children: [{ name: "风控处理", icon: "home", path: "/riskHandle" }]
+  },
+  {
+    name: "我的商家",
+    icon: "home",
+    children: [{ name: "商品信息", icon: "home", path: "/commodityMsg" }]
+  },
+  {
+    name: "信息中心",
+    icon: "home",
+    children: [{ name: "我的资料", icon: "home", path: "/myData" }]
+  },
+]

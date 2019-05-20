@@ -1,0 +1,8 @@
+import menu from "@/store/module/Permission/menu.ts";
+import user from "@/store/module/Permission/user.ts";
+export default {
+  modules: {
+    menu,
+    user,
+  },
+};

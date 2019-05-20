@@ -1,0 +1,39 @@
+<template>
+    <a-card :class="$style.h">
+      <a-card-grid :class="$style['index-card-top']">订单总数量</a-card-grid>
+      <a-card-grid :class="$style['index-card-top']">订单总金额（万）</a-card-grid>
+      <a-card-grid :class="$style['index-card-top']">当天汇率：</a-card-grid>
+      <a-card-grid :class="$style['index-card-center']">
+        使用额度（万）：320
+        授信额度（万）：500</a-card-grid>
+      <a-card-grid :class="$style['index-card-center']">
+        73
+        已结算未付款金额（万）</a-card-grid>
+    </a-card>
+</template>
+<script >
+import { Vue, Component } from 'vue-property-decorator'
+@Component
+export default class IndexView extends Vue {
+  mounted() {
+  }
+}
+</script>
+<style lang="less" module>
+.index-card-top{
+  width: 33.33%;
+  text-align: center;
+  height: 50%
+}
+.index-card-center{
+  width: 50%;
+  height: 50%;
+  text-align: center;
+}
+.h{
+  height: 100%;
+  >div{
+    height: 100%
+  }
+}
+</style>

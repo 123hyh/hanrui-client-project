@@ -1,0 +1,186 @@
+<script lang='tsx'>
+import Component, { mixins } from "vue-class-component";
+import QueryBar from "@/components/common/QueryBar.vue";
+import TableComponent from "@/components/common/TableComponent.vue";
+import PaginationComponent from "@/components/common/PaginationComponent.vue";
+import FormDrawerComponent from "@/components/common/FormDrawerComponent.vue";
+import api from "@/api/interface.ts";
+
+import mixin from "@/views/myBusiness/mixins.ts";
+@Component({
+  components: {
+    QueryBar,
+    TableComponent,
+    FormDrawerComponent,
+    PaginationComponent
+  }
+})
+export default class SupplierView extends mixins(mixin) {
+  created() {
+    this.getTableData();
+  }
+  // 查询条件 input
+  private searchFormList = {
+    supplier: {
+      type: "string",
+      ui: {
+        label: "供应商编码"
+      }
+    },
+    supplierName: {
+      type: "string",
+      ui: {
+        label: "供应商"
+      }
+    },
+    status: {
+      type: "checkbox",
+      ui: {
+        label: "状态"
+      }
+    }
+  };
+  public formData = {
+    supplierCode: {
+      type: "string",
+      ui: {
+        label: "商品编码",
+        readonly: true
+      }
+    },
+    supplierName: {
+      type: "string",
+      ui: {
+        label: "供应商编码",
+        readonly: true
+      }
+    },
+    corporate: {
+      type: "string",
+      ui: {
+        label: "法人代表"
+      }
+    },
+    creditCode: {
+      type: "string",
+      ui: {
+        label: "信用代码"
+      }
+    },
+    contact: {
+      type: "string",
+      ui: {
+        label: "联系人"
+      }
+    },
+    ContactMethod: {
+      type: "string",
+      ui: {
+        label: "联系方式"
+      }
+    },
+    salesCurrency: {
+      type: "select",
+      ui: {
+        label: "销售币别"
+      }
+    },
+    isCarrier: {
+      type: "checkbox",
+      ui: {
+        label: "是否承运商"
+      }
+    },
+    companyAddress: {
+      type: "string",
+      ui: {
+        label: "公司地址"
+      }
+    }
+  };
+  public table = {
+    list: [],
+    count: 0,
+    config: [
+      {
+        title: "供应商编码",
+        dataIndex: "supplierCode",
+        width: 200
+      },
+      {
+        title: "供应商名称",
+        dataIndex: "supplierName",
+        width: 200
+      },
+      {
+        title: "联系人",
+        dataIndex: "contact",
+        width: 200
+      },
+      {
+        title: "联系方式",
+        dataIndex: "ContactMethod",
+        width: 200
+      },
+      {
+        title: "币别",
+        dataIndex: "salesCurrency",
+        width: 200
+      },
+      {
+        title: '地址',
+        dataIndex: 'companyAddress',
+        width:300
+      },
+      {
+        title: "创建时间",
+        dataIndex: "createTime",
+        width: 200
+      },
+      {
+        title: "状态",
+        dataIndex: "status",
+        width: 200
+      }
+    ],
+    loading: false
+  };
+  render() {
+    return (
+      <div>
+        <query-bar
+          on-queryBarBtnClick={this.queryBarBtnClick}
+          queryBarData={{ formList: this.searchFormList }}
+        />
+        <table-component
+          table={this.table}
+          on-tableAllEvent={this.tableAllEvent}
+        />
+        <pagination-component
+          total={this.table.count}
+          on-pageChange={this.getTableData}
+        />
+        <form-drawer-component
+          formData={this.formData}
+          layout={50}
+          drawerVisible={this.drawerVisible}
+          on-closeDrawer={this.closeDrawer}
+        />
+      </div>
+    );
+  };
+  public async getTableData(
+    data: { pageIndex?: number; pageSize?: number } = {}
+  ) {
+    this.table.loading = true;
+    try {
+      const { list, count } = await api.getSupplierData(data);
+      this.table = { ...this.table, list, count };
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.table.loading = false;
+    }
+  }
+}
+</script>

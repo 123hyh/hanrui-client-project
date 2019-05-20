@@ -1,0 +1,52 @@
+import Vue from 'vue';
+import Router from 'vue-router';
+import Home from '@/views/Home.vue';
+
+Vue.use(Router);
+
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      redirect: '/login'
+    },
+    {
+      path: '/login',
+      component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue')
+    },
+    {
+      path: '/',
+      component: Home,
+      children: [
+        {
+          path: '/home',
+          name: 'home',
+          alias: '/index',
+          component: () => import/* webpackChunkName: "IndexComponent" */('@/views/IndexComponent.vue')
+        },
+        {
+          path: 'orderList',
+          name: 'orderList',
+          component: () => import('@/views/quickOrder/OrderList.vue')
+        },
+        {
+          path: 'entranceEntrustBills',
+          name: 'entranceEntrustBills',
+          component: () => import('@/views/quickOrder/entranceEntrustBills.vue')
+        },
+        {
+          path: '*',
+          component: () => import('@/views/404.vue')
+        }
+      ]
+    },
+    // {
+    //   path: '/about',
+    //   name: 'about',
+    //   // route level code-splitting
+    //   // this generates a separate chunk (about.[hash].js) for this route
+    //   // which is lazy-loaded when the route is visited.
+    //   component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
+    // },
+  ],
+});

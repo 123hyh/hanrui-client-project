@@ -1,0 +1,114 @@
+import Vue from "vue";
+import Router from "vue-router";
+import Home from "@/views/Home.vue";
+
+Vue.use(Router);
+
+export default new Router({
+  routes: [
+    {
+      path: "/",
+      redirect: "/login",
+    },
+    {
+      path: "/login",
+      component: () => import(/* webpackChunkName: "login" */ "@/views/Login.vue"),
+    },
+    {
+      path: "/:Menu",
+      component: Home,
+      children: [
+        {
+          path: "/M00",
+          name: "home",
+          alias: "/index",
+          component: () => import/* webpackChunkName: "IndexComponent" */("@/views/Index.vue"),
+        },
+        // 订单列表
+        {
+          path: "/M0101",
+          name: "orderList",
+          component: () => import("@/views/quickOrder/OrderList.vue"),
+        },
+        // 进口委托订单
+        {
+          path: "/M0102",
+          name: "entranceEntrustBills",
+          component: () => import("@/views/quickOrder/entranceEntrustBills.vue"),
+        },
+        // 出口委托订单
+        {
+          path: "/M0103",
+          name: "exitEntrustBills",
+          component: () => import("@/views/quickOrder/exitEntrustBills.vue")
+        },
+        // 转口委托订单
+        {
+          path: "/M0104",
+          name: "reExportsEntrustBills",
+          component: () => import("@/views/quickOrder/reExportsEntrustBills.vue")
+        },
+        {
+          path: "/M0105",
+          name: "domesticEntrustBills",
+          component: () => import("@/views/quickOrder/domesticEntrustBills.vue")
+        },
+        // 授信申请
+        {
+          path: "/M0301",
+          name: "creditRequest",
+          component: () => import("@/views/creditRequest/creditRequest.vue"),
+          props: true
+        },
+        // 风控处理
+        {
+          path: "/M0302",
+          name: "riskHandle",
+          component: () => import("@/views/creditRequest/riskHandle.vue"),
+        },
+        // 商品信息
+        {
+          path: "/M0401",
+          name: "commodityMsg",
+          component: () => import("@/views/myBusiness/CommodityMsg.vue"),
+        },
+        // 供应商
+        {
+          path: "/M0402",
+          name: "supplier",
+          component: () => import("@/views/myBusiness/Supplier.vue"),
+        },
+        // 客户
+        {
+          path: "/M0403",
+          name: "client",
+          component: () => import("@/views/myBusiness/Client.vue"),
+        },
+        // 我的信息
+        {
+          path: "/M0501",
+          name: "myData",
+          component: () => import("@/views/messageCenter/PersonalDetailsView.vue"),
+        },
+        // 信息节点
+        {
+          path: "/M0502",
+          name: "msgNode",
+          component: () => import("@/views/messageCenter/msgNodeView.vue")
+        },
+        {
+          path: "/*",
+          component: () => import("@/views/404.vue"),
+        }
+      ]
+    },
+    // {
+    //   path: '/about',
+    //   name: 'about',
+    //   // route level code-splitting
+    //   // this generates a separate chunk (about.[hash].js) for this route
+    //   // which is lazy-loaded when the route is visited.
+    //   component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
+    // },
+  ],
+});

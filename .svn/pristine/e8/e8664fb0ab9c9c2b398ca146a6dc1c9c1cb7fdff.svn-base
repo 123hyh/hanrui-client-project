@@ -1,0 +1,14 @@
+class UTools {
+  /* 剔除对象 undefined || null */
+  public mapObj(obj: object) {
+    // tslint:disable-next-line:only-arrow-functions
+    return (function mapObj() {
+      return Object.keys(this).reduce((pre: object, cur: string) => {
+        // tslint:disable-next-line:no-unused-expression
+        (this[cur] !== undefined && this[cur] !== null) && (pre[cur] = this[cur]);
+        return pre;
+      }, {});
+    }).call(obj);
+  }
+}
+export default Object.freeze(new UTools());

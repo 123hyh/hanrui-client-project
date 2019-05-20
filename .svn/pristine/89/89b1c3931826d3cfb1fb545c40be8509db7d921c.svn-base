@@ -1,0 +1,42 @@
+<template>
+  <div class="creditRequest">
+    <div class="main">
+      <h1 style="text-align: center;margin-top: 50px">授信申请书</h1>
+      <form-component :formData="formData" :layout="100"/>
+      <btn-component></btn-component>
+    </div>
+  </div>
+</template>
+
+<script lang='tsx'>
+import { Vue, Component } from "vue-property-decorator";
+import FormComponent from "@/components/common/FormComponent.vue";
+import BtnComponent from "@/components/common/BtnComponent.vue";
+
+import formData from "@/testData/creditRequest/creditRequest.ts";
+@Component({
+  components: {
+    FormComponent,
+    BtnComponent
+  }
+})
+export default class creditRequest extends Vue {
+  private formData = formData;
+}
+</script>
+<style lang="less" scoped>
+.creditRequest {
+  // height: 100%;
+}
+.main {
+  width: 50%;
+  margin: auto;
+  line-height: 100%;
+  .flex-layout {
+    margin: 10px 0;
+  }
+}
+.btn-layout{
+  text-align: center
+}
+</style>

@@ -1,0 +1,83 @@
+<script lang='tsx'>
+import { Vue, Component } from "vue-property-decorator";
+import TableComponent from "@/components/common/TableComponent.vue";
+import PaginationComponent from "@/components/common/PaginationComponent.vue";
+import api from "@/api/interface.ts";
+@Component({
+  components: {
+    TableComponent,
+    PaginationComponent
+  }
+})
+export default class creditRequest extends Vue {
+  created() {
+    this.getTableData();
+  }
+  render() {
+    return (
+      <div>
+        <table-component table={this.table} />
+        <pagination-component
+          total={this.table.count}
+          on-pageChange={this.getTableData}
+        />
+      </div>
+    );
+  }
+  public table = {
+    list: [],
+    count: 0,
+    config: [
+      {
+        title: "申请单号",
+        dataIndex: "requestCode",
+        width: 200
+      },
+      {
+        title: "申请时间",
+        dataIndex: "requestTime",
+        width: 200
+      },
+      {
+        title: "申请额度(万)",
+        dataIndex: "requestLimit",
+        width: 200
+      },
+      {
+        title: "币别",
+        dataIndex: "currency",
+        width: 200
+      },
+      {
+        title: "授信期限",
+        dataIndex: "creditDeadline",
+        width: 200
+      },
+      {
+        title: "处理进度",
+        dataIndex: "disposeSchedule",
+        width: 200
+      },
+      {
+        title: "备注",
+        dataIndex: "remark",
+        width: 500
+      }
+    ],
+    loading: false
+  };
+  public async getTableData(data: { pageIndex?: number; pageSize?: number } = {}) {
+    this.table.loading = true;
+    try {
+      const { list, count } = await api.getriskHandleData(data);
+      setTimeout(() => {
+        this.table = { ...this.table, list, count };
+      }, 500);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.table.loading = false;
+    }
+  }
+}
+</script>

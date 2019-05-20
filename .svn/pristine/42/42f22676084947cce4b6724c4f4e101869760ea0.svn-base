@@ -1,0 +1,147 @@
+<script lang='tsx'>
+import { Vue, Component, Prop } from "vue-property-decorator";
+@Component
+export default class TableComponent extends Vue {
+  @Prop({
+    default: () => ({
+      data: [
+        {
+          key: 1,
+          name: `Edward King`,
+          age: 32,
+          address: `London, Park Lane no.`
+        },
+        {
+          key: 2,
+          name: `Edward King`,
+          age: 33,
+          address: `London, Park Lane no.`
+        },
+        {
+          key: 3,
+          name: `Edward King`,
+          age: 34,
+          address: `London, Park Lane no.`
+        },
+        {
+          key: 4,
+          name: `Edward King`,
+          age: 35,
+          address: `London, Park Lane no.`
+        },
+        {
+          key: 5,
+          name: `Edward King`,
+          age: 36,
+          address: `London, Park Lane no.`
+        },
+        {
+          key: 6,
+          name: `Edward King`,
+          age: 37,
+          address: `London, Park Lane no.`
+        },
+        {
+          key: 7,
+          name: `Edward King`,
+          age: 32,
+          address: `London, Park Lane no.`
+        },
+        {
+          key: 8,
+          name: `Edward King`,
+          age: 32,
+          address: `London, Park Lane no.`
+        },
+        {
+          key: 9,
+          name: `Edward King`,
+          age: 32,
+          address: `London, Park Lane no.`
+        }
+      ],
+      config: [
+        {
+          title: "Name",
+          dataIndex: "name",
+          width: 150
+        },
+        {
+          title: "Age",
+          dataIndex: "age",
+          width: 150
+        },
+        {
+          title: "Address",
+          dataIndex: "address"
+        }
+      ],
+      pagination: {
+        total: 500,
+        isShow: true
+      }
+    })
+  })
+  table: any;
+  render() {
+    let {
+      handleClickTableClickRow,
+      pageChange,
+      pageSizeChange,
+      table: {
+        pagination: { total, isShow },
+        data,
+        config
+      }
+    } = this;
+    return (
+      <section onClick={(e: Event) => handleClickTableClickRow(e)}>
+        <a-table columns={config} dataSource={data} pagination={false} />
+        {isShow && total && (
+          <a-pagination
+            showSizeChanger
+            on-change={(current: number, size: number) =>
+              pageChange({ current, size })
+            }
+            on-showSizeChange={(current: number, size: number) =>
+              pageSizeChange({ current, size })
+            }
+            defaultCurrent={6}
+            total={total}
+          />
+        )}
+      </section>
+    );
+  }
+  // 点击当前行取得当前行数据的key 取table.data对于的一条数据
+  handleClickTableClickRow(e: any) {
+    e.stopPropagation();
+    // 如果当前点击对象不是 td 就不处理
+    if (e.target.nodeName !== "TD") return;
+    debugger
+    e.target.parentNode.className += " active-row";
+    let rowIndex = +e.target.parentNode.getAttribute("data-row-key");
+    let data = this.table.data.filter((item: any) => item.key === rowIndex)[0];
+    this.$emit("handleClickTableClickRow", data);
+  }
+  // 当前 页码 变化
+  pageChange({ current = 1, size = 10 }: { current: number; size: number }) {
+    this.$emit("paginationChange", { current, size });
+  }
+  // 当前 pageSize 变化
+  pageSizeChange({
+    current = 1,
+    size = 10
+  }: {
+    current: number;
+    size: number;
+  }) {
+    this.$emit("paginationChange", { current, size });
+  }
+}
+</script>
+<style lang="less" scoped>
+  .active-row{
+    background-color: red
+  }
+</style>

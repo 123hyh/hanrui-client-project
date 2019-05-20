@@ -1,0 +1,18 @@
+<script lang='tsx'>
+import { Vue, Component } from "vue-property-decorator";
+import TableComponent from '@/components/common/TableComponent.vue'
+@Component({
+  components: {
+    TableComponent
+  }
+})
+export default class creditRequest extends Vue {
+  render(){
+    return (
+      <div>
+        <TableComponent></TableComponent>
+      </div>
+    )
+  }
+}
+</script>

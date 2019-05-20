@@ -1,0 +1,17 @@
+// tslint:disable-next-line:class-name
+interface formValue {
+  [propName: string]: any;
+}
+class UTools {
+  /* 剔除对象 undefined || null */
+  public mapObj(obj: formValue) {
+    let param = {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key) && obj[key] !== undefined) {
+        param = {...param, [key]: obj[key]};
+      }
+    }
+    return param;
+ }
+}
+export default Object.freeze(new UTools());

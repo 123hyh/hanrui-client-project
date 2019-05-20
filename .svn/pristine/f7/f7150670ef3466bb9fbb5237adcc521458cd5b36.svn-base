@@ -1,0 +1,78 @@
+<script lang='tsx'>
+import { Vue, Component, Prop } from "vue-property-decorator";
+import data from "@/testData/tableData.js";
+
+// 接口类型
+interface currentAndSize {
+  current: number;
+  size: number;
+}
+@Component
+export default class TableComponent extends Vue {
+  @Prop({
+    type: Object,
+    default: () => data
+  })
+  table: any;
+  render() {
+    let {
+      handleClickTableClickRow,
+      pageChange,
+      table: {
+        pagination: { total, isShow },
+        data,
+        config
+      }
+    } = this;
+    return (
+      <section onClick={(e: Event) => handleClickTableClickRow(e)}>
+        <a-table columns={config} dataSource={data} pagination={false} />
+        {isShow && total && (
+          <a-pagination
+            showSizeChanger
+            on-change={(current: number, size: number) =>
+              pageChange({ current, size })
+            }
+            on-showSizeChange={(current: number, size: number) =>
+              pageChange({ current, size })
+            }
+            defaultCurrent={6}
+            total={total}
+          />
+        )}
+      </section>
+    );
+  }
+  // 点击当前行取得当前行数据的key 取table.data对于的一条数据
+  handleClickTableClickRow(e: any) {
+    e.stopPropagation();
+    // 如果当前点击对象不是 td 就不处理
+    if (e.target.nodeName !== "TD") return;
+    // 点击当前行
+    let rowIndex = +e.target.parentNode.getAttribute("data-row-key");
+    // 点击当前行 背景颜色 高亮
+    for (let elem of e.target.parentNode.parentNode.childNodes) {
+      let index = +elem.getAttribute("data-row-key");
+      index ===
+        (rowIndex
+          ? elem.classList.add("table-active-row")
+          : [...elem.classList].includes("table-active-row") &&
+            elem.classList.remove("table-active-row"));
+    }
+    this.$emit(
+      "handleClickTableClickRow",
+      this.table.data.filter((item: any) => item.key === rowIndex)[0]
+    );
+  }
+
+  // 当前 (页码 | pageSize) 变化
+  pageChange({ current = 1, size = 10 }: currentAndSize) {
+    this.$emit("paginationChange", { current, size });
+  }
+}
+</script>
+<style lang="less">
+.table-active-row {
+  background-color: #e6f7ff !important;
+}
+</style>

@@ -1,0 +1,51 @@
+<script lang='tsx'>
+// import { Vue, Component } from "vue-property-decorator";
+import Component, { mixins } from 'vue-class-component'
+import QueryBar from "@/components/common/QueryBar.vue";
+import TableComponent from "@/components/common/TableComponent.vue";
+import FormDrawerComponent from "@/components/common/FormDrawerComponent.vue";
+
+import mixin from '@/views/myBusiness/mixins.ts'
+@Component({
+  components: {
+    QueryBar,
+    TableComponent,
+    FormDrawerComponent
+  }
+})
+export default class clientView extends mixins(mixin) {
+  private searchFormList = {
+    client: {
+      type: "string",
+      ui: {
+        label: "客户编码"
+      }
+    },
+    clientName: {
+      type: "string",
+      ui: {
+        label: "客户"
+      }
+    },
+    status: {
+      type: "checkbox",
+      ui: {
+        label: "状态"
+      }
+    }
+  };
+  render() {
+    return (
+      <div>
+        <query-bar
+          on-queryBarBtnClick={this.queryBarBtnClick}
+          queryBarData={{ formList: this.searchFormList }}
+        />
+        <table-component on-tableAllEvent={this.tableAllEvent} />
+        <form-drawer-component drawerVisible={this.drawerVisible} on-closeDrawer={this.closeDrawer}/>
+      </div>
+    );
+  }
+  
+}
+</script>

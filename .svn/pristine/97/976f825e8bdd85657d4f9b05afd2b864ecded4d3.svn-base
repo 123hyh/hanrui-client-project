@@ -1,0 +1,22 @@
+<template>
+<div class="header">
+  <header>头部</header>
+</div>
+</template>
+
+<script lang='ts'>
+import { Vue, Component } from "vue-property-decorator";
+@Component
+export default class HeaderItem extends Vue {
+}
+</script>
+<style lang="less" scoped>
+.header {
+  box-sizing: border-box;
+  padding: 5px;
+  box-shadow: 0 2px #f3f4f5;
+  height: 10vmin;
+  background: #fff;
+  border-bottom: 1px solid #f3f4f5
+}
+</style>

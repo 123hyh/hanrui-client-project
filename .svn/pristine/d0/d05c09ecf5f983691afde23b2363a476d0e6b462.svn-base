@@ -1,0 +1,39 @@
+<template>
+  <a-form
+    layout="inline"
+    :form="form"
+  >
+    <a-form-item label="Username">
+      <a-input v-decorator="[
+            'username',
+            {
+              rules: [{ required: true, message: 'Username is required!' }],
+            }
+          ]" />
+    </a-form-item>
+  </a-form>
+</template>
+
+<script>
+// 表单公共组件
+import config from '@/testData/form/index.ts'
+export default {
+  props: {
+    formData: {
+      type: Object,
+      default: () => (config)
+    }
+  },
+  data () {
+    return {
+      form: this.$form.createForm(this,{onValuesChange: this.handleChange})
+    }
+  },
+  methods: {
+    // 表单的值发生改变时触发
+    handleChange(data,value){
+      debugger
+    }
+  }
+}
+</script>

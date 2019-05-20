@@ -1,0 +1,53 @@
+<template>
+  <div class="header">
+    <header class="layout">
+      <!-- <div><a-icon @click.stop="handleOpenMenu" :type="collapsed ? 'menu-unfold' : 'menu-fold'" /></div> -->
+      <div>
+        <a-popover placement="bottomRight">
+          <template slot="content">
+            <div style='width:200px'>
+              <p v-bg-highlight >Content</p>
+              <p>Content</p>
+            </div>
+          </template>
+          <template slot="title">
+            <span>Title</span>
+          </template>
+          <a-icon type="bell" />
+        </a-popover>
+      </div>
+    </header>
+  </div>
+</template>
+
+<script lang='ts'>
+import { Vue, Component, Emit } from "vue-property-decorator";
+@Component
+export default class HeaderItem extends Vue {
+  public collapsed: boolean = true;
+  @Emit("handleOpenMenu") handleOpenMenu() {
+    this.collapsed = !this.collapsed;
+    return this.collapsed;
+  }
+}
+</script>
+<style lang="less" scoped>
+.layout {
+  display: flex;
+  font-size: 25px;
+  align-items: center;
+  height: 100%;
+  > div {
+    margin-left: 20px;
+    cursor: pointer;
+  }
+}
+.header {
+  box-sizing: border-box;
+  padding: 5px;
+  box-shadow: 0 2px #f3f4f5;
+  height: 10vmin;
+  background: #fff;
+  border-bottom: 1px solid #f3f4f5;
+}
+</style>

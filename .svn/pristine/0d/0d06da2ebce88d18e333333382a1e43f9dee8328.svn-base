@@ -1,0 +1,42 @@
+<script lang='tsx'>
+import { Vue, Component, Prop } from "vue-property-decorator";
+@Component({
+  components: {}
+})
+export default class QueryBar extends Vue {
+  @Prop({
+    default: () => ({
+      btnList: {
+        query: "查询",
+        insert: "新增",
+        remove: "删除",
+        update: "修改"
+      },
+      formList: {}
+    })
+  })
+  queryBarData: any;
+  render() {
+    return (
+      <div>
+        <div>
+          {Object.keys(this.queryBarData.btnList).map((item, i) => (
+            <a-button
+              type="primary"
+              on-click={() =>
+                this.$emit(
+                  /* 点击按钮发送到上级当前点击对象 */
+                  "queryBarBtnClick",
+                  item
+                )
+              }
+            >
+              {this.queryBarData['btnList'][item]}
+            </a-button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+}
+</script>

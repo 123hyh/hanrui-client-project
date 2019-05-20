@@ -1,0 +1,109 @@
+<script lang='tsx'>
+function hasErrors(fieldsError: any) {
+  return Object.keys(fieldsError).some(field => fieldsError[field]);
+}
+import { Vue, Component } from "vue-property-decorator";
+@Component
+export default class Login extends Vue {
+  render() {
+    return (
+      <section class="bg-image">
+        <section class="login">
+          <a-form
+            layout="inline"
+            form={this.form}
+            on-submit={this.handleSubmit}
+          >
+            <a-form-item
+              validate-status={this.userNameError() ? "error" : ""}
+              help={this.userNameError() || ""}
+            >
+              <a-input
+                v-decorator={[
+                  "userName",
+                  {
+                    rules: [
+                      { required: true, message: "Please input your username!" }
+                    ]
+                  }
+                ]}
+                placeholder="Username"
+              >
+                <a-icon
+                  slot="prefix"
+                  type="user"
+                  style="color:rgba(0,0,0,.25)"
+                />
+              </a-input>
+            </a-form-item>
+            <a-form-item
+              validate-status={this.passwordError() ? "error" : ""}
+              help={this.passwordError() || ""}
+            >
+              <a-input
+                v-decorator={[
+                  "password",
+                  {
+                    rules: [
+                      { required: true, message: "Please input your Password!" }
+                    ]
+                  }
+                ]}
+                type="password"
+                placeholder="Password"
+              >
+                <a-icon
+                  slot="prefix"
+                  type="lock"
+                  style="color:rgba(0,0,0,.25)"
+                />
+              </a-input>
+            </a-form-item>
+            <a-form-item>
+              <a-button
+                type="primary"
+                html-type="submit"
+                disabled={this.hasErrors(this.form.getFieldsError())}
+              >
+                Log in
+              </a-button>
+            </a-form-item>
+          </a-form>
+        </section>
+      </section>
+    );
+  }
+  hasErrors = hasErrors;
+  form = this.$form.createForm(this);
+  userNameError() {
+    const { getFieldError, isFieldTouched } = this.form;
+    return isFieldTouched("userName") && getFieldError("userName");
+  }
+  // Only show error after a field is touched.
+  passwordError() {
+    const { getFieldError, isFieldTouched } = this.form;
+    return isFieldTouched("password") && getFieldError("password");
+  }
+  handleSubmit(e: any) {
+    e.preventDefault();
+    this.form.validateFields((err: any, values: any) => {
+      if (!err) {
+        console.log("Received values of form: ", values);
+      }
+    });
+  }
+}
+</script>
+<style lang="less">
+.bg-image {
+  width: 100%;
+  height: 100vmin;
+  background: url(~@/assets/images/background.a568162c.svg) no-repeat 50% 50%;
+  display: flex;
+  > .login {
+    margin: auto;
+    width: 340px;
+    height: 370px;
+  }
+}
+</style>

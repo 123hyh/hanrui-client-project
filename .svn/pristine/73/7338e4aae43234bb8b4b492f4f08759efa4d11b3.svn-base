@@ -1,0 +1,47 @@
+<script lang='tsx'>
+interface testVal {
+  target: string;
+  formData: Object;
+}
+import { Vue, Component } from "vue-property-decorator";
+import QueryBar from "@/components/common/QueryBar.vue";
+import TableComponent from "@/components/common/TableComponent.vue";
+@Component({
+  components: {
+    QueryBar,
+    TableComponent
+  }
+})
+export default class CommodityMsg extends Vue {
+  render() {
+    return (
+      <div>
+        <query-bar on-queryBarBtnClick={this.queryBarBtnClick} />
+        <table-component on-tableAllEvent={this.tableAllEvent} />
+      </div>
+    );
+  }
+  /**
+   * @method queryBarBtnClick 当前点击按钮对象
+   * @param target 当前点击按钮的key
+   * @param form 当前查询栏的form
+   */
+  public queryBarBtnClick({ target, formData }: testVal) {
+    debugger;
+  }
+  public tableAllEvent(data: object = {}) {
+    let currentEvent = Object.keys(data)[0];
+    let event = {
+      page: this.handlePageChange,
+      currentRowData: this.handleTableClickRow
+    };
+    currentEvent && event[currentEvent](data[currentEvent]);
+  }
+  public handlePageChange(page: object = {}) {
+    debugger;
+  }
+  public handleTableClickRow(row: object ={}) {
+    debugger;
+  }
+}
+</script>

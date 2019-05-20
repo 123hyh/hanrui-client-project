@@ -1,0 +1,115 @@
+
+// tslint:disable-next-line:class-name
+interface pageVal {
+  page: {
+    current: number;
+    size: number;
+  };
+  row: any[];
+  [propName: string]: any;
+}
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import api from '@/api/interface.ts'
+import utools from '@/utils/uTools.ts'
+@Component
+export default class MyMixin extends Vue {
+  [x: string]: any;
+  // 抽屉显示
+  public drawerVisible: boolean = false;
+  public btnTarget: string = '';
+  public form: any = {};
+  public clickRow: any = {};
+  /**
+   * @method queryBarBtnClick 当前点击按钮对象
+   * @param target 当前点击按钮的key
+   * @param form 当前查询栏的form
+   */
+  public queryBarBtnClick({ target, formData }: { target: string, formData: object }) {
+    switch (target) {
+      case "insert":
+      case "update":
+        this.drawerVisible = true;
+        this.$nextTick(() => {
+          this.btnTarget === 'insert' ? this.form.resetFields() : this.form.setFieldsValue(this.clickRow)
+        })
+        break;
+      case 'remove':
+        if (!Object.keys(this.clickRow).length) {
+          this.$message.error('请选择一条数据进行删除')
+        }
+        break;
+      case 'query': 
+        this.getTableData({data: formData})
+      break;
+    }
+    this.btnTarget = target;
+  }
+  public tableAllEvent(data: pageVal) {
+    const currentEvent = Object.keys(data)[0];
+    // tslint:disable-next-line:no-unused-expression
+    currentEvent && this.event[currentEvent](data[currentEvent]);
+  }
+  public handlePageChange({ current, size }: { current: number, size: number }): void {
+    debugger
+  }
+  public handleTableClickRow(row: any[]): void {
+    this.clickRow = row;
+  }
+  public closeDrawer(type: string) {
+
+    if (type !== 'submit') {
+      this.drawerVisible = !this.drawerVisible;
+    } else {
+      this.form.validateFields((err: any, val: any) => {
+        if (!err) val && this.operationFormData(val)
+      })
+    }
+  }
+  get event(): any {
+    return {
+      page: this.handlePageChange,
+      currentRowData: this.handleTableClickRow,
+    };
+  };
+  get moduleChangeApi(): any {
+    return {
+      '/M0401': 'changeCommodityMsgData',
+    }
+  };
+  get moduleDeleteApi(): any {
+    return {
+      '/M0401': 'deleteCommodityMsg',
+    }
+  };
+  formBlock(form: any) {
+    this.form = form;
+    // this.btnTarget === 'insert' && this.form.setFieldsValue({});
+  }
+  async operationFormData(data: any) {
+    let statusCode: number = 0;
+    this.btnTarget === 'update' && (data.itemCode = this.clickRow.itemCode || 0)
+    try {
+      const { status } = await api[this.moduleChangeApi[this.$route.path]]({ data, method: this.btnTarget === 'insert' ? 'POST' : 'PUT' });
+      statusCode = status;
+      this.getTableData();
+      this.drawerVisible = !this.drawerVisible;
+    } catch (error) {
+      console.log(error)
+    };
+    utools.setResponseMsg(statusCode, this)
+  };
+  public async deleteTableData() {
+    if (!Object.keys(this.clickRow).length) { this.$message.error('请选择一条数据进行删除'); return };
+    let statusCode = 0;
+    try {
+      const { status } = await api[this.moduleDeleteApi[this.$route.path]](this.clickRow.itemCode);
+      statusCode = status;
+      this.getTableData();
+      this.clickRow = {};
+    } catch (error) {
+      console.log(error)
+    }
+    utools.setResponseMsg(statusCode, this)
+  }
+}

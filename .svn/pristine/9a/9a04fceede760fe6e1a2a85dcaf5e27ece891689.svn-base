@@ -1,0 +1,14 @@
+<script lang='tsx'>
+import {Vue,Component} from 'vue-property-decorator'
+import QueryBar from '@/components/common/QueryBar.vue'
+@Component({
+  components: {
+    QueryBar
+  }
+})
+export default class CommodityMsg extends Vue{
+  render(){
+    return (<QueryBar></QueryBar>)
+  }
+}
+</script>
