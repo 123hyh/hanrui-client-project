@@ -4,28 +4,16 @@
     <!-- {/* 供应商 客户 */} -->
     <section class="order-message">
       <form-component
-        :formData='FormData'
-        @form='initForm'
-        @clickSearch='formClickSearch'
-        :layout='33.3'
+        :formData="FormData"
+        @form="initForm"
+        @clickSearch="formClickSearch"
+        :layout="33.3"
       />
     </section>
-    <a-divider
-      style="position: relative"
-      orientation="left"
-    >
-      商品信息 币别：美元
-    </a-divider>
-    <btn-component
-      class="localtion-btn"
-      :btnList='btnList'
-      @btnClick='commodityBtnClick'
-    />
+    <a-divider style="position: relative" orientation="left">商品信息 币别：美元</a-divider>
+    <btn-component class="localtion-btn" :btnList="btnList" @btnClick="commodityBtnClick"/>
     <!-- {/* 商品信息 */} -->
-    <ediet-table
-      :table='table'
-      @setTableRowData='setTableRowData'
-    ></ediet-table>
+    <ediet-table :table="table" @setTableRowData="setTableRowData"></ediet-table>
     <!-- <section>
       <section class="table-layout">
         <table-component
@@ -33,20 +21,17 @@
           @tableAllEvent='tableAllEvent'
         />
       </section>
-    </section> -->
-    <AccessoryUploader />
-    <BtnComponent
-      @btnClick='btnClick'
-      class="center-btn"
-    />
+    </section>-->
+    <AccessoryUploader/>
+    <BtnComponent @btnClick="btnClick" class="center-btn"/>
     <!-- <section class="layout">
           <section class="btn-width">
           </section>
-        </section> -->
+    </section>-->
     <table-dialog-component
-      @dialogVisible='tableDialogVisible'
-      :isShowDialog='showDialog'
-      :table='activeDialogTableConfig'
+      @dialogVisible="tableDialogVisible"
+      :isShowDialog="showDialog"
+      :table="activeDialogTableConfig"
     ></table-dialog-component>
   </section>
 </template>
@@ -228,12 +213,15 @@ export default class entranceEntrustBills extends Mixins(FormMinxi) {
   public async getQuickGoodsList() {
     try {
       const {
-        data: { list, count }
+        data: { list, count },
+        status
       } = await api.getQuickGoodsList({
         clientBillNo: this.responseFormData.clientBillNo
       });
       this.table.list = utools.setTableKey(list);
       this.table.count = count;
+      console.log(1)
+      return status;
     } catch (error) {
       console.log(error);
     }

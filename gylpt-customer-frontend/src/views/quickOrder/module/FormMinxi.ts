@@ -27,9 +27,7 @@ export default class Save extends Vue {
         label: '销售币别',
         dict: 'currencyName',
         options: [
-          /*  { itemKey: "1", itemVal: "美金" },
-           { itemKey: "2", itemVal: "港币" },
-           { itemKey: "3", itemVal: "日元" } */
+          /* { itemKey: "1", itemVal: "美金" }, */
         ],
       },
     },
@@ -39,9 +37,7 @@ export default class Save extends Vue {
         label: '交货方式',
         dict: 'cargoMode',
         options: [
-          /* { itemKey: "1", itemVal: "美金" },
-          { itemKey: "2", itemVal: "港币" },
-          { itemKey: "3", itemVal: "日元" } */
+          /* { itemKey: "1", itemVal: "美金" },*/
         ],
       },
     },
@@ -51,9 +47,7 @@ export default class Save extends Vue {
         dict: 'currencyName',
         label: '采购币别',
         options: [
-          /* { itemKey: "1", itemVal: "美金" },
-          { itemKey: "2", itemVal: "港币" },
-          { itemKey: "3", itemVal: "日元" } */
+          /* { itemKey: "1", itemVal: "美金" }, */
         ],
       },
     },
@@ -63,9 +57,7 @@ export default class Save extends Vue {
         label: '收货方式',
         dict: 'cargoMode',
         options: [
-          /*  { itemKey: "1", itemVal: "美金" },
-           { itemKey: "2", itemVal: "港币" },
-           { itemKey: "3", itemVal: "日元" } */
+          /*  { itemKey: "1", itemVal: "美金" },*/
         ],
       },
     },
@@ -76,46 +68,55 @@ export default class Save extends Vue {
   }
   // 获取委托订单
   public async getData() {
-    try {
-      const { data = {}, status } = await api.getEntrustOrderData(
-        this.bizType[this.$route.path],
-      );
-      this.responseFormData = data;
-      this.form.setFieldsValue(data);
-      // tslint:disable-next-line:no-unused-expression
-      data.clientBillNo && await this.getQuickGoodsList();
-      console.log(1)
-    } catch (error) {
-      // tslint:disable-next-line:no-console
-      console.log(error);
-    }
-  }
-  // 保存操作
-  public handleSave() {
-    this.form.validateFields(async (err: any, value: any) => {
+    return new Promise(async (resolve, reject) => {
       try {
-        if (!err) {
-          // 处理请求参数
-          const set = {
-            ...this.responseFormData,
-            ...value,
-            ...this.requestCodeSet,
-            bizType: this.bizType[this.$route.path],
-            quickGoods: this.table.list,
-          };
-          const { data, status } = await api.changeQuickEntrustData({
-            data: set,
-          });
-          // tslint:disable-next-line:no-unused-expression
-          status === 200 && this.$message.success('保存成功!!!');
-          await this.getData();
-        }
+        const { data, status } = await api.getEntrustOrderData(
+          this.bizType[this.$route.path],
+        );
+        this.responseFormData = data;
+        this.form.setFieldsValue(data);
+        // tslint:disable-next-line:no-unused-expression
+        data.clientBillNo && await this.getQuickGoodsList();
+        console.log(2)
+        return resolve(status);
       } catch (error) {
-        this.$message.error('保存失败, 请重试!!!');
         // tslint:disable-next-line:no-console
         console.log(error);
       }
-    });
+    })
+
+  }
+  // 保存操作
+  public handleSave() {
+    return new Promise((resolve, reject) => {
+      this.form.validateFields(async (err: any, value: any) => {
+        try {
+          if (!err) {
+            // 处理请求参数
+            const set = {
+              ...this.responseFormData,
+              ...value,
+              ...this.requestCodeSet,
+              bizType: this.bizType[this.$route.path],
+              quickGoods: this.table.list,
+            };
+            const { data, status } = await api.changeQuickEntrustData({
+              data: set,
+            });
+            // tslint:disable-next-line:no-unused-expression
+            status === 200 && this.$message.success('保存成功!!!');
+            await this.getData();
+            console.log(3)
+            resolve(status);
+          }
+        } catch (error) {
+          this.$message.error('保存失败, 请重试!!!');
+          // tslint:disable-next-line:no-console
+          console.log(error);
+        }
+      });
+    })
+
   };
   // 提交操作
   public async handleSubmit() {
@@ -129,12 +130,20 @@ export default class Save extends Vue {
         return;
       } else {
         await this.handleSave();
-        console.log(2) // 2311
+        console.log(4) // 2311
         const { data, status } = await api.submitQuickEntrustData(this.responseFormData);
-        console.log(3)
+        console.log(5)
+        // 提交成功后  reset 数据
         // tslint:disable-next-line:no-unused-expression
-        status === 200 && this.$message.success('提交成功!!!');
-        this.getData();
+        status === 200 && (this.$message.success('提交成功!!!'),
+          this.form.resetFields(),
+          this.table.list = [],
+          this.requestCodeSet = {},
+          this.responseFormData = {},
+          this.activeDialogTableConfig = {},
+          this.searchTarget = '',
+          this.table.count = 0
+        );
       }
     } catch (error) {
       this.$message.error('提交失败,请重试!!!');
