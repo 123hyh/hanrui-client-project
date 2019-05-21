@@ -73,7 +73,7 @@ export default class Save extends Vue {
         const { data, status } = await api.getEntrustOrderData(
           this.bizType[this.$route.path],
         );
-        this.responseFormData = data;
+        this.responseFormData = data ? data : {};
         this.form.setFieldsValue(data);
         // tslint:disable-next-line:no-unused-expression
         data.clientBillNo && await this.getQuickGoodsList();
@@ -140,7 +140,7 @@ export default class Save extends Vue {
           this.table.list = [],
           this.requestCodeSet = {},
           this.responseFormData = {},
-          this.activeDialogTableConfig = {},
+          this.activeDialogTableConfig = { config: [] },
           this.searchTarget = '',
           this.table.count = 0
         );
