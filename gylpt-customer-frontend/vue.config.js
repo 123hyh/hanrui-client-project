@@ -22,8 +22,8 @@ module.exports = {
   devServer: {
     proxy: {
       '/service': {
-        target: 'http://47.107.253.252:8083/customer', // 线上
-        // target: 'http://192.168.0.104:8083/customer', // 朋建
+        // target: 'http://47.107.253.252:8083/customer', // 线上
+        target: 'http://192.168.0.104:8083/customer', // 朋建
         // target: 'http://192.168.0.200:8083/customer', //郭工
         changeOrigin: true,
         pathRewrite:{

@@ -17,7 +17,7 @@ export default class TableComponent extends Vue {
   }
   @Prop({
     type: Object,
-    default: () => data
+    default: () => ({})
   })
   table: any;
   render() {
@@ -44,7 +44,7 @@ export default class TableComponent extends Vue {
           pagination={false}
           columns={config}
           dataSource={data}
-          scroll={{ x: this.tableWidth}}
+          scroll={{ x: this.tableWidth }}
         />
         {/*  <a-table
           bordered

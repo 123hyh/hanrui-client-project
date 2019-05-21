@@ -35,7 +35,14 @@
         :read-only="true"
         v-if="val.type === 'btnSearch'"
         placeholder="点击按钮选择"
-        @search="onSearch(key)"
+        v-decorator="[
+          key,
+          {
+            rules: val.ui.rules,
+            initialValue: '',
+          }
+        ]"
+        @search="$emit('clickSearch',key)"
       />
       <!-- 按钮 -->
       <!--  <a-button
@@ -131,10 +138,6 @@ export default {
     handleChange (data, value) {
       // this.$emit('formDataChange', this.form)
     },
-    // search按钮
-    onSearch (currentKey) {
-      console.log(`当前点击的search按钮 ${currentKey}`)
-    },
     // 点击按钮
     showModal (currentKey) {
       debugger
@@ -146,7 +149,6 @@ export default {
         this.formData[item].ui.dict && dictList.push(this.formData[item].ui.dict);
       };
       const data = await Promise.all((dictList.map(item => (api.getDictData(item).catch(err => err)))));
-      debugger
       dictList.forEach((item, i) => {
         for (const key in this.formData) {
           this.formData[key].ui.dict === item && (this.formData[key].ui.options = data[i]['data'])

@@ -1,9 +1,11 @@
 <template>
+  <!-- 可编辑表格 -->
   <div>
     <a-table
       :columns="table.config"
       :dataSource="data"
       bordered
+      :pagination='false'
     >
       <template
         v-for="col in configKey"
@@ -26,16 +28,18 @@
       >
         <div class='editable-row-operations'>
           <span v-if="record.editable">
-            <a @click="() => save(record.key)">Save</a>
+            <a @click="() => save(record.key)">保存</a>
             <a-popconfirm
-              title='Sure to cancel?'
+              title='取消修改吗?'
+              okText='确定'
+              cancelText='取消'
               @confirm="() => cancel(record.key)"
             >
-              <a>Cancel</a>
+              <a>取消</a>
             </a-popconfirm>
           </span>
           <span v-else>
-            <a @click="() => edit(record.key)">Edit</a>
+            <a @click="() => edit(record.key)">编辑</a>
           </span>
         </div>
       </template>
@@ -43,40 +47,21 @@
   </div>
 </template>
 <script>
-const columns = [{
-  title: 'name',
-  dataIndex: 'name',
-  width: '25%',
-  scopedSlots: { customRender: 'name' },
-}, {
-  title: 'age',
-  dataIndex: 'age',
-  width: '15%',
-  scopedSlots: { customRender: 'age' },
-}, {
-  title: 'address',
-  dataIndex: 'address',
-  width: '40%',
-  scopedSlots: { customRender: 'address' },
-}, {
-  title: 'operation',
-  dataIndex: 'operation',
-  scopedSlots: { customRender: 'operation' },
-}]
-
-const data = []
-for (let i = 0; i < 100; i++) {
-  data.push({
-    key: i.toString(),
-    name: `Edrward ${i}`,
-    age: 32,
-    address: `London Park no. ${i}`,
-  })
-}
 export default {
   computed: {
     configKey () {
       return this.table.config.map(item => (item.dataIndex))
+    },
+  },
+  watch: {
+    'table.list': {
+      handler (cur, pre) {
+        Array.isArray(cur) &&
+          // 深克隆赋值到data
+          (this.data = cur.map(item => ({ ...item })));
+      },
+      deep: true,
+      immediate: true
     }
   },
   props: {
@@ -86,15 +71,13 @@ export default {
     }
   },
   data () {
-    this.cacheData = this.table.list.map(item => ({ ...item }))
     return {
-      data: this.table.list.map(item => ({ ...item })),
-      columns,
+      data: [],
     }
   },
   methods: {
     handleChange (value, key, column) {
-      const newData = [...this.data]
+      const newData = [...this.data];
       const target = newData.filter(item => key === item.key)[0]
       if (target) {
         target[column] = value
@@ -114,17 +97,14 @@ export default {
       const target = this.data.filter(item => key === item.key)[0];
       delete target.editable;
       this.data = [...this.data];
-      this.$emit('setTableRowData', { data: target, key })
+      this.$emit('setTableRowData', { data: { ...target }, key })
     },
     cancel (key) {
-      debugger
-      const newData = [...this.data]
-      const target = newData.filter(item => key === item.key)[0]
-      if (target) {
-        Object.assign(target, this.cacheData.filter(item => key === item.key)[0])
-        delete target.editable
-        this.data = newData
-      }
+      const newData = [...this.table.list];
+      const target = newData.filter(item => key === item.key)[0];
+      let index = this.data.findIndex(item => item.key === key);
+      this.data[index] = { ...target };
+      this.data = [...this.data]
     },
     handleAdd () {
       const newData = {

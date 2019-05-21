@@ -6,6 +6,7 @@
       <form-component
         :formData='FormData'
         @form='initForm'
+        @clickSearch='formClickSearch'
         :layout='33.3'
       />
     </section>
@@ -18,7 +19,7 @@
     <btn-component
       class="localtion-btn"
       :btnList='btnList'
-      @btnClick='btnClick'
+      @btnClick='commodityBtnClick'
     />
     <!-- {/* 商品信息 */} -->
     <ediet-table
@@ -42,107 +43,76 @@
           <section class="btn-width">
           </section>
         </section> -->
+    <table-dialog-component
+      @dialogVisible='tableDialogVisible'
+      :isShowDialog='showDialog'
+      :table='activeDialogTableConfig'
+    ></table-dialog-component>
   </section>
 </template>
 
 <script lang='ts'>
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Mixins } from "vue-property-decorator";
 // 组件
 import TableComponent from "@/components/common/TableComponent.vue";
 import AccessoryUploader from "@/components/common/AccessoryUploader.vue";
 import BtnComponent from "@/components/common/BtnComponent.vue";
 import FormComponent from "@/components/common/FormComponent.vue";
 import EdietTable from "@/components/common/EdietTable/Table.vue";
+import TableDialogComponent from "@/components/common/TableDialogComponent.vue";
 import api from "@/api/interface.ts";
+
+// mixins
+import FormMinxi from "@/views/quickOrder/module/FormMinxi.ts";
 
 // 配置数据
 import data from "@/testData/tableData.ts";
 import FormData from "@/testData/quickOrder/entranceEntrustBills.ts";
+// 弹窗表格配置
+import clientTableConfig from "@/configure/table/myBusiness/Client.ts";
+import supplierTableConfig from "@/configure/table/myBusiness/Supplier.ts";
+import utools from "@/utils/uTools";
+const tableDataTemplate = {
+  goodsName: "",
+  model: "",
+  unit: "",
+  pieces: 0,
+  price: 0,
+  totalPrice: 0,
+  netWeight: 0,
+  grossWeight: 0,
+  quantity: 0,
+  sourceArea: "",
+  brank: ""
+  // key: Math.random()
+};
 @Component({
   components: {
     TableComponent,
     AccessoryUploader,
     BtnComponent,
     FormComponent,
-    EdietTable
+    EdietTable,
+    TableDialogComponent
   }
 })
-export default class entranceEntrustBills extends Vue {
-  // 表格配置
-  public FormData = {
-    supplier: {
-      type: "btnSearch",
-      ui: {
-        label: "供应商"
-      }
-    },
-    client: {
-      type: "btnSearch",
-      ui: {
-        label: "客户"
-      }
-    },
-    sellCurrency: {
-      type: "select",
-      ui: {
-        label: "销售币别",
-        dict: "currencyName",
-        options: [
-          { itemKey: "1", itemVal: "美金" },
-          { itemKey: "2", itemVal: "港币" },
-          { itemKey: "3", itemVal: "日元" }
-        ]
-      }
-    },
-    deliveryWay: {
-      type: "select",
-      ui: {
-        label: "交货方式",
-        dict: "cargoMode",
-        options: [
-          { itemKey: "1", itemVal: "美金" },
-          { itemKey: "2", itemVal: "港币" },
-          { itemKey: "3", itemVal: "日元" }
-        ]
-      }
-    },
-    procurementCurrency: {
-      type: "select",
-      ui: {
-        dict: "currencyName",
-        label: "采购币别",
-        options: [
-          { itemKey: "1", itemVal: "美金" },
-          { itemKey: "2", itemVal: "港币" },
-          { itemKey: "3", itemVal: "日元" }
-        ]
-      }
-    },
-    ReceivingGoodsWay: {
-      type: "select",
-      ui: {
-        label: "收货方式",
-        dict: "cargoMode",
-        options: [
-          { itemKey: "1", itemVal: "美金" },
-          { itemKey: "2", itemVal: "港币" },
-          { itemKey: "3", itemVal: "日元" }
-        ]
-      }
-    }
-  };
-  public form: any = {};
-  // public table = { ...data, height: 200 };
+export default class entranceEntrustBills extends Mixins(FormMinxi) {
+  // 显示弹窗
+  public showDialog: boolean = false;
+  // 弹窗选择后的code暂存；
+  public requestCodeSet = {};
+  // 表格上的按钮集合
   public btnList = [
     { label: "增加一行", key: "addOne" },
-    { label: "批量增加", key: "add" },
+    { label: "批量增加", key: "addBatch" },
     { label: "新建商品", key: "create" },
     { label: "下载模板", key: "down" },
     { label: "批量上传", key: "upload" }
   ];
+  // 表格编辑数据
   public table: any = {
     list: [
-      {
+      /* {
         index: 1,
         goodsName: "空军一号",
         model: "a-133-a580",
@@ -154,9 +124,9 @@ export default class entranceEntrustBills extends Vue {
         grossWeight: 10,
         quantity: 1,
         sourceArea: "美国",
-        brank: "耐克",
+        brand: "耐克",
         key: Math.random()
-      }
+      } */
     ],
     count: 0,
     config: [
@@ -212,7 +182,7 @@ export default class entranceEntrustBills extends Vue {
       },
       {
         title: "品牌",
-        dataIndex: "brank",
+        dataIndex: "brand",
         width: 200
       },
       {
@@ -223,49 +193,115 @@ export default class entranceEntrustBills extends Vue {
     ].map(item => ({ ...item, scopedSlots: { customRender: item.dataIndex } })),
     loading: false
   };
-  public initForm(form: any) {
-    this.form = form;
+  // 弹窗表格的配置
+  public dialogTableConfig = {
+    clientTableConfig,
+    supplierTableConfig
+  };
+  // 当前高亮的弹窗配置
+  public activeDialogTableConfig: any = {};
+  // 当前target弹窗
+  public searchTarget: string = "";
+
+  // 当前 模块 的 类型  //  1进口 2出口 3转口 4 国内',
+  public get bizType(): any {
+    return {
+      "/M0102": 1,
+      "/M0103": 2,
+      "/M0104": 3,
+      "/M0105": 4
+    };
+  }
+  // 页面初始化
+  public created() {
+    //  获取表单数据
+    this.getData();
   }
   // 点击保存 或提交事件
   public btnClick(target: string) {
     target === "save" ? this.handleSave() : this.handleSubmit();
   }
-  // 保存
-  public handleSave() {
-    this.form.validateFields(async (err: any, value: any) => {
-      try {
-        if (!err) {
-          const data = await api.changeQuickEntrustData({});
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    });
-  }
-  // 提交
-  public handleSubmit() {}
   public tableAllEvent(data: object = {}) {
     debugger;
   }
-  // 获取表格数据
-  public async getTableData(
-    data: { pageIndex?: number; pageSize?: number } = {}
-  ) {
-    this.table.loading = true;
+  // 获取商品信息
+  public async getQuickGoodsList() {
     try {
-      const { list, count } = await api.getClientData(data);
-      this.table = { ...this.table, list, count };
+      const {
+        data: { list, count }
+      } = await api.getQuickGoodsList({
+        clientBillNo: this.responseFormData.clientBillNo
+      });
+      this.table.list = utools.setTableKey(list);
+      this.table.count = count;
     } catch (error) {
       console.log(error);
-    } finally {
-      this.table.loading = false;
     }
   }
   // 修改商品信息的一行数据
-  public setTableRowData({ data, key }: { data: any; key: number }) {
-    this.table.list[
-      this.table.list.findIndex((item: any) => item.key === key)
-    ] = data;
+  public async setTableRowData({ data, key }: { data: any; key: number }) {
+    let code = this.responseFormData.clientBillNo;
+    let index = this.table.list.findIndex((item: any) => item.key === key);
+    try {
+      if (code) {
+        // 如果有 clientBillNo 表明主单据 已保存
+        let method = data.itemCode ? "PUT" : "POST";
+        const { data: res } = await api.changeQuickGoods({
+          data: {
+            ...data,
+            clientBillNo: code
+          },
+          method
+        });
+        index !== -1 && (this.table.list[index] = { ...res, key });
+      } else {
+        this.table.list[index] = data;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // 隐藏和 显示 弹窗
+  tableDialogVisible({
+    isVisible,
+    rowData = {}
+  }: {
+    isVisible: boolean;
+    rowData?: any;
+  }) {
+    const { supplierName, supplierCode, customerName, customerCode } = rowData;
+    let len = Object.keys(rowData).length;
+    this.showDialog = isVisible;
+    if (!len) return;
+    let value: any = {
+      supplierName: {
+        supplierName,
+        supplierCode
+      },
+      customerName: {
+        customerName,
+        customerCode
+      }
+    };
+    let obj = value[this.searchTarget];
+    this.requestCodeSet = { ...this.requestCodeSet, ...obj };
+    this.form.setFieldsValue(obj);
+  }
+
+  // 表格 的按钮事件
+  public commodityBtnClick(target: string) {
+    var that: any = this;
+    try {
+      that[`${target}Data`]();
+    } catch (error) {
+      console.error("未配置按钮事件");
+    }
+  }
+  // 添加商品一条数据
+  public addOneData() {
+    let { list } = this.table;
+    list.unshift({ ...tableDataTemplate, key: Math.random() + Math.random() });
   }
 }
 </script>

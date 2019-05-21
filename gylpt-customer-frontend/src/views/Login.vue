@@ -65,6 +65,7 @@ export default {
                 type="primary"
                 html-type="submit"
                 loading={this.loading}
+                class='goLogin'
                 block
               >
                 登录
@@ -130,7 +131,7 @@ export default {
   > .login {
     position: absolute;
     left: 64.5%;
-    top: 35%; 
+    top: 40%; 
     margin: auto;
     width: 340px;
     height: 370px;
@@ -138,5 +139,10 @@ export default {
       text-align: center;
     }
   }
+}
+.goLogin{
+  border: 1px solid;
+  background: #525CF2;
+  border-radius: 20px;
 }
 </style>

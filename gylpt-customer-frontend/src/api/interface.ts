@@ -83,11 +83,46 @@ class Service {
     // return mock.orderList(pageIndex, pageSize);
   }
   // 新增 修改 快捷下单
-  public changeQuickEntrustData({ data = {}, method = 'POST' }: { data: any, method: string }) {
+  public changeQuickEntrustData({ data = {}, method = 'POST' }: { data: any, method?: string }) {
     return this.request({
       url: `/quickentrust/`,
       method,
       data,
+    });
+  }
+  // 提交 快捷下单
+  public submitQuickEntrustData(data: any) {
+    return this.request({
+      url: `/quickentrust/submit`,
+      method: 'POST',
+      data,
+    });
+  }
+  // 查询商品信息数据
+  public getQuickGoodsList({ pageIndex = 1, pageSize = 10, ...obj }: { pageIndex?: number, pageSize?: number }) {
+    return this.request({
+      url: `/quickgoods/search`,
+      method: 'POST',
+      data: {
+        pageIndex,
+        pageSize,
+        ...obj,
+      },
+    });
+  }
+  // 修改一条商品信息
+  public changeQuickGoods({ data, method }: { data: any, method: string }) {
+    return this.request({
+      url: `/quickgoods/`,
+      method,
+      data,
+    });
+  }
+  // 查询最近一条 已保存且未提交的 委托订单
+  public getEntrustOrderData(bizType: number) {
+    return this.request({
+      url: `/quickentrust/${bizType}`,
+      method: 'GET',
     });
   }
   // 授信申请
